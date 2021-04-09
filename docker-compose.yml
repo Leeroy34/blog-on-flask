@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: blogpostgres
+    ports:
+      - 5432:5000
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD=1997
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=flaskblog
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
+  app:
+    build: .
+    container_name: flaskblog
+    ports:
+      - 5000:5000
+    environment:
+      SQLALCHEMY_DATABASE_URI: 'postgresql+psycopg2://postgres:1997@db:5432/flaskblog'
+    restart: always
+    volumes:
+      - ./flaskblog:/usr/src/app/app
+      - ./migrations:/usr/src/app/migrations
+    links:
+      - db
